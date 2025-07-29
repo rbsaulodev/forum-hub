@@ -3,7 +3,7 @@ package br.com.rb.api.domain.model;
 import lombok.Getter;
 
 @Getter
-public enum Stack {
+public enum StackTeacher {
     JAVA_SPRING("Java & Spring"),
     TS_ANGULAR("TypeScript & Angular"),
     TS_NEXT("TypeScript & Next.js"),
@@ -13,7 +13,7 @@ public enum Stack {
 
     private final String displayName;
 
-    Stack(String displayName) {
+    StackTeacher(String displayName) {
         this.displayName = displayName;
     }
 }

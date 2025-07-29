@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Course {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,8 +29,14 @@ public class Course {
     @OneToMany(mappedBy = "course")
     private List<Topic> topics = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "courses")
-    private List<Student> students = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "enrollments",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> enrolledUsers = new ArrayList<>();
+
 
     @ManyToMany
     @JoinTable(
@@ -37,5 +44,5 @@ public class Course {
             joinColumns = @JoinColumn(name = "course_id"),
             inverseJoinColumns = @JoinColumn(name = "teacher_id")
     )
-    private List<Teacher> teachers = new ArrayList<>();
+    private List<User> teachers = new ArrayList<>();
 }

@@ -1,9 +1,7 @@
 package br.com.rb.api.infrastructure.config;
 
 import br.com.rb.api.application.dto.exception.GeneralErrorDTO;
-import br.com.rb.api.application.validations.CourseHasTopicsException;
-import br.com.rb.api.application.validations.DuplicateTopicException;
-import br.com.rb.api.application.validations.UserNotEnrolledException;
+import br.com.rb.api.application.validations.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,4 +24,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new GeneralErrorDTO(ex.getMessage()));
     }
 
+    @ExceptionHandler(TopicModificationForbiddenException.class)
+    public ResponseEntity<GeneralErrorDTO> handleTopicModificationForbidden(TopicModificationForbiddenException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new GeneralErrorDTO(ex.getMessage()));
+    }
+
+    @ExceptionHandler(RoleInUseException.class)
+    public ResponseEntity<GeneralErrorDTO> handleRoleInUse(RoleInUseException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new GeneralErrorDTO(ex.getMessage()));
+    }
 }

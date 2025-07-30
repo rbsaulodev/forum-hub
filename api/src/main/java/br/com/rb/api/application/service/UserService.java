@@ -2,13 +2,20 @@ package br.com.rb.api.application.service;
 
 import br.com.rb.api.application.dto.user.AdminCreateUserDTO;
 import br.com.rb.api.application.dto.user.CreateUserDTO;
+import br.com.rb.api.application.dto.user.UpdateUserDTO;
 import br.com.rb.api.application.mapper.UserMapper;
+import br.com.rb.api.application.validations.EmailAlreadyExistsException;
 import br.com.rb.api.application.validations.EntityAlreadyExistsException;
+import br.com.rb.api.application.validations.UserDeletionException;
 import br.com.rb.api.domain.model.Role;
 import br.com.rb.api.domain.model.User;
 import br.com.rb.api.domain.repository.RoleRepository;
+import br.com.rb.api.domain.repository.TopicRepository;
 import br.com.rb.api.domain.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +26,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TopicRepository topicRepository;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, TopicRepository topicRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.topicRepository = topicRepository;
     }
 
     @Transactional
@@ -58,5 +67,49 @@ public class UserService {
         newUser.setRoles(roles);
 
         return userRepository.save(newUser);
+    }
+
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o ID: " + id));
+    }
+
+    @Transactional
+    public User update(Long id, UpdateUserDTO dto) {
+        User user = findById(id);
+
+        if (dto.email() != null && !dto.email().equalsIgnoreCase(user.getEmail())) {
+            if (userRepository.existsByEmail(dto.email())) {
+                throw new EmailAlreadyExistsException("O email informado já está em uso por outro usuário.");
+            }
+            user.setEmail(dto.email());
+        }
+
+        if (dto.name() != null) user.setName(dto.name());
+        if (dto.password() != null) user.setPassword(passwordEncoder.encode(dto.password()));
+        if (dto.roles() != null && !dto.roles().isEmpty()) {
+            Set<Role> roles = roleRepository.findByNameIn(dto.roles());
+            if (roles.size() != dto.roles().size()) {
+                throw new RuntimeException("Um ou mais papéis informados não existem.");
+            }
+            user.setRoles(roles);
+        }
+
+        return userRepository.save(user);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        User user = findById(id);
+
+        if (topicRepository.existsByAuthorId(id)) {
+            throw new UserDeletionException("Não é possível excluir um usuário que já é autor de tópicos.");
+        }
+
+        userRepository.delete(user);
     }
 }

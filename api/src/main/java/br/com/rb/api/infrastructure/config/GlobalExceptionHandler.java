@@ -33,4 +33,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<GeneralErrorDTO> handleRoleInUse(RoleInUseException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new GeneralErrorDTO(ex.getMessage()));
     }
+
+    @ExceptionHandler(UserDeletionException.class)
+    public ResponseEntity<GeneralErrorDTO> handleUserDeletion(UserDeletionException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new GeneralErrorDTO(ex.getMessage()));
+    }
 }

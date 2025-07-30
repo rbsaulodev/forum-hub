@@ -1,7 +1,6 @@
 package br.com.rb.api.application.dto.course;
 
 import br.com.rb.api.domain.model.CategoryCourse;
-import br.com.rb.api.domain.model.Topic;
 import br.com.rb.api.domain.model.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

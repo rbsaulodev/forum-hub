@@ -7,7 +7,7 @@ import br.com.rb.api.domain.model.Course;
 import br.com.rb.api.domain.model.User;
 import br.com.rb.api.domain.repository.CourseRepository;
 import br.com.rb.api.domain.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +24,7 @@ public class CourseService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public Course create(CreateCourseDTO dto) {
         createCourseValidator.validate(dto);
         List<User> teachers = userRepository.findAllById(dto.teacherIds());

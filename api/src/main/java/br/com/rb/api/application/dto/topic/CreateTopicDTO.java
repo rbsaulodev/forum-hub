@@ -1,4 +1,4 @@
-package br.com.rb.api.application.dto;
+package br.com.rb.api.application.dto.topic;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

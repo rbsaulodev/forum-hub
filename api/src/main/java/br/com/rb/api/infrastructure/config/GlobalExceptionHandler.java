@@ -1,6 +1,6 @@
 package br.com.rb.api.infrastructure.config;
 
-import br.com.rb.api.application.dto.GeneralErrorDTO;
+import br.com.rb.api.application.dto.exception.GeneralErrorDTO;
 import br.com.rb.api.application.validations.DuplicateTopicException;
 import br.com.rb.api.application.validations.UserNotEnrolledException;
 import org.springframework.http.HttpStatus;

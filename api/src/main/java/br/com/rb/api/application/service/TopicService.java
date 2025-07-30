@@ -1,6 +1,6 @@
 package br.com.rb.api.application.service;
 
-import br.com.rb.api.application.dto.CreateTopicDTO;
+import br.com.rb.api.application.dto.topic.CreateTopicDTO;
 import br.com.rb.api.application.mapper.TopicMapper;
 import br.com.rb.api.application.validations.CreateTopicValidator;
 import br.com.rb.api.domain.model.Course;
@@ -39,7 +39,7 @@ public class TopicService {
                 .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com o ID: " + dto.courseId()));
 
         Topic newTopic = TopicMapper.toEntity(dto, author, course);
-        
+
         return topicRepository.save(newTopic);
     }
 }

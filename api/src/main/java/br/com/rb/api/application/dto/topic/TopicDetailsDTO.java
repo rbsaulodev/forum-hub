@@ -1,4 +1,4 @@
-package br.com.rb.api.application.dto;
+package br.com.rb.api.application.dto.topic;
 
 import br.com.rb.api.domain.model.Topic;
 import br.com.rb.api.domain.model.TopicStatus;

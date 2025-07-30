@@ -1,6 +1,6 @@
 package br.com.rb.api.application.mapper;
 
-import br.com.rb.api.application.dto.CreateTopicDTO;
+import br.com.rb.api.application.dto.topic.CreateTopicDTO;
 import br.com.rb.api.domain.model.Course;
 import br.com.rb.api.domain.model.Topic;
 import br.com.rb.api.domain.model.TopicStatus;

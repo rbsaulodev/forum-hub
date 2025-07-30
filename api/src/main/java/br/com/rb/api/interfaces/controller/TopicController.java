@@ -1,7 +1,7 @@
 package br.com.rb.api.interfaces.controller;
 
-import br.com.rb.api.application.dto.CreateTopicDTO;
-import br.com.rb.api.application.dto.TopicDetailsDTO;
+import br.com.rb.api.application.dto.topic.CreateTopicDTO;
+import br.com.rb.api.application.dto.topic.TopicDetailsDTO;
 import br.com.rb.api.application.service.TopicService;
 import br.com.rb.api.domain.model.Topic;
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ public class TopicController {
         Topic newTopic = topicService.createTopic(dto);
         var uri = uriBuilder.path("/topics/{id}").buildAndExpand(newTopic.getId()).toUri();
 
-        var detailsDto = new TopicDetailsDTO(newTopic);
+        TopicDetailsDTO detailsDto = new TopicDetailsDTO(newTopic);
         return ResponseEntity.created(uri).body(detailsDto);
     }
 }

@@ -24,9 +24,10 @@ public class TopicController {
     @PostMapping
     public ResponseEntity<TopicDetailsDTO> create(@RequestBody @Valid CreateTopicDTO dto, UriComponentsBuilder uriBuilder) {
         Topic newTopic = topicService.createTopic(dto);
+        TopicDetailsDTO detailsDto = new TopicDetailsDTO(newTopic);
+
         var uri = uriBuilder.path("/topics/{id}").buildAndExpand(newTopic.getId()).toUri();
 
-        TopicDetailsDTO detailsDto = new TopicDetailsDTO(newTopic);
         return ResponseEntity.created(uri).body(detailsDto);
     }
 }

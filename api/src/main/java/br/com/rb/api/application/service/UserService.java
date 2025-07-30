@@ -3,7 +3,7 @@ package br.com.rb.api.application.service;
 import br.com.rb.api.application.dto.user.AdminCreateUserDTO;
 import br.com.rb.api.application.dto.user.CreateUserDTO;
 import br.com.rb.api.application.mapper.UserMapper;
-import br.com.rb.api.application.validations.EmailAlreadyExistsException;
+import br.com.rb.api.application.validations.EntityAlreadyExistsException;
 import br.com.rb.api.domain.model.Role;
 import br.com.rb.api.domain.model.User;
 import br.com.rb.api.domain.repository.RoleRepository;
@@ -29,7 +29,7 @@ public class UserService {
     @Transactional
     public User registerStudent(CreateUserDTO dto) {
         if (userRepository.existsByEmail(dto.email())) {
-            throw new EmailAlreadyExistsException("O email informado já está em uso.");
+            throw new EntityAlreadyExistsException("O email informado já está em uso.");
         }
 
         String encodedPassword = passwordEncoder.encode(dto.password());
@@ -45,7 +45,7 @@ public class UserService {
     @Transactional
     public User createUserByAdmin(AdminCreateUserDTO dto) {
         if (userRepository.existsByEmail(dto.email())) {
-            throw new EmailAlreadyExistsException("O email informado já está em uso.");
+            throw new EntityAlreadyExistsException("O email informado já está em uso.");
         }
 
         String encodedPassword = passwordEncoder.encode(dto.password());

@@ -1,6 +1,7 @@
 package br.com.rb.api.application.validations;
 
 import br.com.rb.api.application.dto.course.CreateCourseDTO;
+import br.com.rb.api.application.exception.TeacherSkillMismatchException;
 import br.com.rb.api.domain.model.CategoryCourse;
 import br.com.rb.api.domain.model.Role;
 import br.com.rb.api.domain.model.SpecialtyTeacher;

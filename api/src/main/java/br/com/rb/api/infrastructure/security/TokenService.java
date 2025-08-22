@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.stream.Collectors;
 
 @Service
 public class TokenService {
@@ -21,9 +22,15 @@ public class TokenService {
     public String generateToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
+
+            var roles = user.getRoles().stream()
+                    .map(role -> role.getName())
+                    .collect(Collectors.toList());
+
             return JWT.create()
                     .withIssuer("FórumHub API")
                     .withSubject(user.getEmail())
+                    .withClaim("roles", roles)
                     .withExpiresAt(getExpirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException exception){

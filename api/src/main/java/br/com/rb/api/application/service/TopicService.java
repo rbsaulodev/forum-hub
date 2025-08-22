@@ -4,7 +4,7 @@ import br.com.rb.api.application.dto.topic.CreateTopicDTO;
 import br.com.rb.api.application.dto.topic.UpdateTopicDTO;
 import br.com.rb.api.application.mapper.TopicMapper;
 import br.com.rb.api.application.validations.CreateTopicValidator;
-import br.com.rb.api.application.validations.TopicModificationForbiddenException;
+import br.com.rb.api.application.exception.TopicModificationForbiddenException;
 import br.com.rb.api.domain.model.Course;
 import br.com.rb.api.domain.model.Role;
 import br.com.rb.api.domain.model.Topic;
@@ -35,7 +35,7 @@ public class TopicService {
     }
 
     @Transactional
-    public Topic createTopic(CreateTopicDTO dto) {
+    public Topic create(CreateTopicDTO dto) {
         createTopicValidator.validate(dto);
 
         User author = userRepository.findById(dto.authorId())

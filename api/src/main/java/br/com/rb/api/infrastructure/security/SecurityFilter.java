@@ -1,5 +1,6 @@
 package br.com.rb.api.infrastructure.security;
 
+import br.com.rb.api.domain.model.User;
 import br.com.rb.api.domain.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

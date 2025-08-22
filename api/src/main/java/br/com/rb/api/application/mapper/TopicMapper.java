@@ -5,8 +5,11 @@ import br.com.rb.api.domain.model.Course;
 import br.com.rb.api.domain.model.Topic;
 import br.com.rb.api.domain.model.TopicStatus;
 import br.com.rb.api.domain.model.User;
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDateTime;
 
+@Component
 public class TopicMapper {
     public static Topic toEntity(CreateTopicDTO dto, User author, Course course) {
         Topic topic = new Topic();

@@ -2,11 +2,12 @@ package br.com.rb.api.application.service;
 
 import br.com.rb.api.application.dto.user.AdminCreateUserDTO;
 import br.com.rb.api.application.dto.user.CreateUserDTO;
+import br.com.rb.api.application.dto.user.UserDetailsDTO;
 import br.com.rb.api.application.dto.user.UpdateUserDTO;
 import br.com.rb.api.application.mapper.UserMapper;
-import br.com.rb.api.application.validations.EmailAlreadyExistsException;
-import br.com.rb.api.application.validations.EntityAlreadyExistsException;
-import br.com.rb.api.application.validations.UserDeletionException;
+import br.com.rb.api.application.exception.EmailAlreadyExistsException;
+import br.com.rb.api.application.exception.EntityAlreadyExistsException;
+import br.com.rb.api.application.exception.UserDeletionException;
 import br.com.rb.api.domain.model.Role;
 import br.com.rb.api.domain.model.User;
 import br.com.rb.api.domain.repository.RoleRepository;
@@ -27,16 +28,18 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final TopicRepository topicRepository;
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, TopicRepository topicRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, TopicRepository topicRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.topicRepository = topicRepository;
+        this.userMapper = userMapper;
     }
 
     @Transactional
-    public User registerStudent(CreateUserDTO dto) {
+    public UserDetailsDTO registerStudent(CreateUserDTO dto) {
         if (userRepository.existsByEmail(dto.email())) {
             throw new EntityAlreadyExistsException("O email informado já está em uso.");
         }
@@ -48,11 +51,12 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Erro de configuração: Papel ROLE_STUDENT não encontrado."));
         newUser.setRoles(Set.of(studentRole));
 
-        return userRepository.save(newUser);
+        User savedUser = userRepository.save(newUser);
+        return userMapper.toDetailsDTO(savedUser);
     }
 
     @Transactional
-    public User createUserByAdmin(AdminCreateUserDTO dto) {
+    public UserDetailsDTO createUserByAdmin(AdminCreateUserDTO dto) {
         if (userRepository.existsByEmail(dto.email())) {
             throw new EntityAlreadyExistsException("O email informado já está em uso.");
         }
@@ -66,21 +70,25 @@ public class UserService {
         }
         newUser.setRoles(roles);
 
-        return userRepository.save(newUser);
+        User savedUser = userRepository.save(newUser);
+        return userMapper.toDetailsDTO(savedUser);
     }
 
-    public Page<User> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable);
+    public Page<UserDetailsDTO> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(userMapper::toDetailsDTO);
     }
 
-    public User findById(Long id) {
-        return userRepository.findById(id)
+    public UserDetailsDTO findById(Long id) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o ID: " + id));
+        return userMapper.toDetailsDTO(user);
     }
 
     @Transactional
-    public User update(Long id, UpdateUserDTO dto) {
-        User user = findById(id);
+    public UserDetailsDTO update(Long id, UpdateUserDTO dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o ID: " + id));
 
         if (dto.email() != null && !dto.email().equalsIgnoreCase(user.getEmail())) {
             if (userRepository.existsByEmail(dto.email())) {
@@ -99,17 +107,18 @@ public class UserService {
             user.setRoles(roles);
         }
 
-        return userRepository.save(user);
+        User updatedUser = userRepository.save(user);
+        return userMapper.toDetailsDTO(updatedUser);
     }
 
     @Transactional
     public void delete(Long id) {
-        User user = findById(id);
-
+        if (!userRepository.existsById(id)) {
+            throw new EntityNotFoundException("Usuário não encontrado com o ID: " + id);
+        }
         if (topicRepository.existsByAuthorId(id)) {
             throw new UserDeletionException("Não é possível excluir um usuário que já é autor de tópicos.");
         }
-
-        userRepository.delete(user);
+        userRepository.deleteById(id);
     }
 }

@@ -1,6 +1,8 @@
 package br.com.rb.api.application.validations;
 
 import br.com.rb.api.application.dto.topic.CreateTopicDTO;
+import br.com.rb.api.application.exception.DuplicateTopicException;
+import br.com.rb.api.application.exception.UserNotEnrolledException;
 import br.com.rb.api.domain.repository.CourseRepository;
 import br.com.rb.api.domain.repository.TopicRepository;
 import org.springframework.stereotype.Component;

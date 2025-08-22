@@ -1,9 +1,10 @@
 package br.com.rb.api.application.service;
 
+import br.com.rb.api.application.dto.course.CourseDetailsDTO;
 import br.com.rb.api.application.dto.course.CreateCourseDTO;
 import br.com.rb.api.application.dto.course.UpdateCourseDTO;
 import br.com.rb.api.application.mapper.CourseMapper;
-import br.com.rb.api.application.validations.CourseHasTopicsException;
+import br.com.rb.api.application.exception.CourseHasTopicsException;
 import br.com.rb.api.application.validations.CreateCourseValidator;
 import br.com.rb.api.domain.model.Course;
 import br.com.rb.api.domain.model.User;
@@ -13,8 +14,8 @@ import br.com.rb.api.domain.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -24,56 +25,59 @@ public class CourseService {
     private final CreateCourseValidator createCourseValidator;
     private final UserRepository userRepository;
     private final TopicRepository topicRepository;
+    private final CourseMapper courseMapper;
 
-    public CourseService(CourseRepository courseRepository, CreateCourseValidator createCourseValidator, UserRepository userRepository, TopicRepository topicRepository) {
+    public CourseService(CourseRepository courseRepository, CreateCourseValidator createCourseValidator, UserRepository userRepository, TopicRepository topicRepository, CourseMapper courseMapper) {
         this.courseRepository = courseRepository;
         this.createCourseValidator = createCourseValidator;
         this.userRepository = userRepository;
         this.topicRepository = topicRepository;
+        this.courseMapper = courseMapper;
     }
 
     @Transactional
-    public Course create(CreateCourseDTO dto) {
+    public CourseDetailsDTO create(CreateCourseDTO dto) {
         createCourseValidator.validate(dto);
         List<User> teachers = userRepository.findAllById(dto.teacherIds());
-
-        Course newCourse = CourseMapper.toEntity(dto, teachers);
-        return courseRepository.save(newCourse);
+        Course newCourse = new CourseMapper().toEntity(dto, teachers);
+        Course savedCourse = courseRepository.save(newCourse);
+        return courseMapper.toDetailsDTO(savedCourse);
     }
 
-    public Page<Course> findAll(Pageable pageable) {
-        return courseRepository.findAll(pageable);
+    public Page<CourseDetailsDTO> findAll(Pageable pageable) {
+        return courseRepository.findAll(pageable)
+                .map(courseMapper::toDetailsDTO);
     }
 
-    public Course findById(Long id) {
-        return courseRepository.findById(id)
+    public CourseDetailsDTO findById(Long id) {
+        Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com o ID: " + id));
+        return courseMapper.toDetailsDTO(course);
     }
-
 
     @Transactional
-    public Course update(Long id, UpdateCourseDTO dto) {
+    public CourseDetailsDTO update(Long id, UpdateCourseDTO dto) {
         createCourseValidator.validate(new CreateCourseDTO(dto.name(), dto.categoryCourse(), dto.teacherIds()));
-
-        Course course = findById(id);
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com o ID: " + id));
         List<User> teachers = userRepository.findAllById(dto.teacherIds());
 
         course.setName(dto.name());
         course.setCategoryCourse(dto.categoryCourse());
         course.setTeachers(teachers);
 
-        return courseRepository.save(course);
+        Course updatedCourse = courseRepository.save(course);
+        return courseMapper.toDetailsDTO(updatedCourse);
     }
 
     @Transactional
     public void delete(Long id) {
-        Course course = findById(id);
-
+        if (!courseRepository.existsById(id)) {
+            throw new EntityNotFoundException("Curso não encontrado com o ID: " + id);
+        }
         if (topicRepository.existsByCourseId(id)) {
             throw new CourseHasTopicsException("Não é possível excluir um curso que já possui tópicos associados.");
         }
-
-        courseRepository.delete(course);
+        courseRepository.deleteById(id);
     }
-
 }

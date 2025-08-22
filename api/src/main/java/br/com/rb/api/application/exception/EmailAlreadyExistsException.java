@@ -1,4 +1,4 @@
-package br.com.rb.api.application.validations;
+package br.com.rb.api.application.exception;
 
 public class EmailAlreadyExistsException extends RuntimeException {
     public EmailAlreadyExistsException(String message) {

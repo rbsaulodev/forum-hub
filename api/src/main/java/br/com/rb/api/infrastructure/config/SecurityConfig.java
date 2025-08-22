@@ -32,6 +32,7 @@ public class SecurityConfig {
                     // Rotas Públicas
                     req.requestMatchers(HttpMethod.POST, "/login", "/register").permitAll();
                     req.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
+                    req.requestMatchers("/error").permitAll(); // <<-- ADICIONE ESTA LINHA
 
                     // Rotas de Administrador
                     req.requestMatchers("/admin/**").hasRole("ADMIN");

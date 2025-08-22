@@ -39,8 +39,8 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<UserDetailsDTO> registerStudent(@RequestBody @Valid CreateUserDTO dto, UriComponentsBuilder uriBuilder) {
-        User newUser = userService.registerStudent(dto);
-        var uri = uriBuilder.path("/users/{id}").buildAndExpand(newUser.getId()).toUri();
-        return ResponseEntity.created(uri).body(new UserDetailsDTO(newUser));
+        UserDetailsDTO newUserDto = userService.registerStudent(dto);
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(newUserDto.id()).toUri();
+        return ResponseEntity.created(uri).body(newUserDto);
     }
 }

@@ -7,6 +7,7 @@ import br.com.rb.api.application.mapper.CourseMapper;
 import br.com.rb.api.application.exception.CourseHasTopicsException;
 import br.com.rb.api.application.validations.CreateCourseValidator;
 import br.com.rb.api.domain.model.Course;
+import br.com.rb.api.domain.model.Topic;
 import br.com.rb.api.domain.model.User;
 import br.com.rb.api.domain.repository.CourseRepository;
 import br.com.rb.api.domain.repository.TopicRepository;
@@ -35,18 +36,44 @@ public class CourseService {
         this.courseMapper = courseMapper;
     }
 
-    @Transactional
-    public CourseDetailsDTO create(CreateCourseDTO dto) {
-        createCourseValidator.validate(dto);
-        List<User> teachers = userRepository.findAllById(dto.teacherIds());
-        Course newCourse = new CourseMapper().toEntity(dto, teachers);
-        Course savedCourse = courseRepository.save(newCourse);
-        return courseMapper.toDetailsDTO(savedCourse);
+    public List<String> listAllStudentNames(Long id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com o ID: " + id));
+        return course.getEnrolledUsers().stream()
+                .map(User::getName)
+                .toList();
+    }
+
+    public List<String> listAllTeacherNames(Long id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com o ID: " + id));
+
+        return course.getTeachers().stream()
+                .map(User::getName)
+                .toList();
+    }
+
+    public List<String> listAllTopicTitles(Long id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado com o ID: " + id));
+
+        return course.getTopics().stream()
+                .map(Topic::getTitle)
+                .toList();
     }
 
     public Page<CourseDetailsDTO> findAll(Pageable pageable) {
         return courseRepository.findAll(pageable)
                 .map(courseMapper::toDetailsDTO);
+    }
+
+    @Transactional
+    public CourseDetailsDTO create(CreateCourseDTO dto) {
+        createCourseValidator.validate(dto);
+        List<User> teachers = userRepository.findAllById(dto.teacherIds());
+        Course newCourse = CourseMapper.toEntity(dto, teachers);
+        Course savedCourse = courseRepository.save(newCourse);
+        return courseMapper.toDetailsDTO(savedCourse);
     }
 
     public CourseDetailsDTO findById(Long id) {

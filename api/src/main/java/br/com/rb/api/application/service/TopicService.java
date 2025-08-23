@@ -92,4 +92,8 @@ public class TopicService {
             throw new TopicModificationForbiddenException("Usuário não tem permissão para modificar este tópico.");
         }
     }
+
+    public boolean isAuthor(Long topicId, Long userId) {
+        return topicRepository.existsByIdAndAuthorId(topicId, userId);
+    }
 }

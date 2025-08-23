@@ -1,7 +1,7 @@
-package br.com.rb.api.interfaces.controller;
+package br.com.rb.api.controller;
 
 import br.com.rb.api.application.dto.course.CourseDetailsDTO;
-import br.com.rb.api.application.service.StudentService;
+import br.com.rb.api.application.service.UserService;
 import br.com.rb.api.domain.model.User;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
@@ -13,23 +13,23 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "bearer-key")
 public class StudentController {
 
-    private final StudentService studentService;
+    private final UserService userService;
 
-    public StudentController(StudentService studentService) {
-        this.studentService = studentService;
+    public StudentController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping("/courses/{courseId}/enroll")
     public ResponseEntity<CourseDetailsDTO> enroll(@PathVariable Long courseId,
                                                    @AuthenticationPrincipal User authenticatedUser) {
-        CourseDetailsDTO updatedCourse = studentService.enroll(authenticatedUser.getId(), courseId);
+        CourseDetailsDTO updatedCourse = userService.enroll(authenticatedUser.getId(), courseId);
         return ResponseEntity.ok(updatedCourse);
     }
 
     @DeleteMapping("/courses/{courseId}/unenroll")
     public ResponseEntity<CourseDetailsDTO> unenroll(@PathVariable Long courseId,
                                                      @AuthenticationPrincipal User authenticatedUser) {
-        CourseDetailsDTO updatedCourse = studentService.unenroll(authenticatedUser.getId(), courseId);
+        CourseDetailsDTO updatedCourse = userService.unenroll(authenticatedUser.getId(), courseId);
         return ResponseEntity.ok(updatedCourse);
     }
 }

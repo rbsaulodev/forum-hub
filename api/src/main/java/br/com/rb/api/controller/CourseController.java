@@ -1,7 +1,7 @@
-package br.com.rb.api.interfaces.controller;
+package br.com.rb.api.controller;
 
-import br.com.rb.api.application.dto.course.CreateCourseDTO;
 import br.com.rb.api.application.dto.course.CourseDetailsDTO;
+import br.com.rb.api.application.dto.course.CreateCourseDTO;
 import br.com.rb.api.application.dto.course.UpdateCourseDTO;
 import br.com.rb.api.application.service.CourseService;
 import jakarta.validation.Valid;
@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
@@ -20,6 +22,24 @@ public class CourseController {
 
     public CourseController(CourseService courseService) {
         this.courseService = courseService;
+    }
+
+    @GetMapping("/{id}/students")
+    public ResponseEntity<List<String>> listStudentNames(@PathVariable Long id) {
+        List<String> studentNames = courseService.listAllStudentNames(id);
+        return ResponseEntity.ok(studentNames);
+    }
+
+    @GetMapping("/{id}/teachers")
+    public ResponseEntity<List<String>> listTeacherNames(@PathVariable Long id) {
+        List<String> teacherNames = courseService.listAllTeacherNames(id);
+        return ResponseEntity.ok(teacherNames);
+    }
+
+    @GetMapping("/{id}/topics")
+    public ResponseEntity<List<String>> listTopicTitles(@PathVariable Long id) {
+        List<String> topicTitles = courseService.listAllTopicTitles(id);
+        return ResponseEntity.ok(topicTitles);
     }
 
     @PostMapping

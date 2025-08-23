@@ -1,4 +1,4 @@
-package br.com.rb.api.interfaces.controller;
+package br.com.rb.api.controller;
 
 import br.com.rb.api.application.dto.user.AdminCreateUserDTO;
 import br.com.rb.api.application.dto.user.UserDetailsDTO;

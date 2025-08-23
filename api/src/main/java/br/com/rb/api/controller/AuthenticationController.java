@@ -1,4 +1,4 @@
-package br.com.rb.api.interfaces.controller;
+package br.com.rb.api.controller;
 
 import br.com.rb.api.application.dto.auth.LoginDTO;
 import br.com.rb.api.application.dto.auth.TokenDTO;

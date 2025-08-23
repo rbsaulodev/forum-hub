@@ -1,8 +1,8 @@
-package br.com.rb.api.interfaces.controller;
+package br.com.rb.api.controller;
 
 import br.com.rb.api.application.dto.user.CreateTeacherDTO;
 import br.com.rb.api.application.dto.user.TeacherDetailsDTO;
-import br.com.rb.api.application.service.TeacherService;
+import br.com.rb.api.application.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -18,23 +18,23 @@ import org.springframework.web.util.UriComponentsBuilder;
 @SecurityRequirement(name = "bearer-key")
 public class TeacherController {
 
-    private final TeacherService teacherService;
+    private final UserService userService;
 
-    public TeacherController(TeacherService teacherService) {
-        this.teacherService = teacherService;
+    public TeacherController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TeacherDetailsDTO> createTeacher(@RequestBody @Valid CreateTeacherDTO dto, UriComponentsBuilder uriBuilder) {
-        TeacherDetailsDTO newTeacher = teacherService.create(dto);
+        TeacherDetailsDTO newTeacher = userService.createTeacher(dto);
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(newTeacher.id()).toUri();
         return ResponseEntity.created(uri).body(newTeacher);
     }
 
     @GetMapping
     public ResponseEntity<Page<TeacherDetailsDTO>> listTeachers(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
-        Page<TeacherDetailsDTO> page = teacherService.findAll(pageable);
+        Page<TeacherDetailsDTO> page = userService.findAllTeachers(pageable);
         return ResponseEntity.ok(page);
     }
 }

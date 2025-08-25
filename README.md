@@ -1,7 +1,5 @@
 # FórumHub API
 
------
-
 ### 📖 Índice
 
   - [🚀 Sobre o Projeto](https://www.google.com/search?q=%23-sobre-o-projeto)
@@ -115,9 +113,25 @@ Siga os passos abaixo para executar a API localmente.
         ```bash
         mvn spring-boot:run
         ```
-      - O Flyway irá criar e popular as tabelas do banco de dados automaticamente na primeira execução.
+      - O Flyway irá criar as tabelas e as roles (`ROLE_ADMIN`, etc.) automaticamente na primeira execução.
 
-5.  **Acesse a API:**
+5.  **Crie um Usuário Administrador (Opcional, mas recomendado):**
+
+      - Para testar os endpoints protegidos, você precisa de um usuário com a role `ADMIN`. Após a aplicação rodar e criar as tabelas, execute o seguinte comando SQL no seu banco de dados `forumhub_db`:
+        ```sql
+        -- Inserir o usuário Admin. A senha é 'admin123'
+        INSERT INTO users (name, email, password)
+        VALUES ('Administrador', 'admin@email.com', '$2a$10$e.ExV8s.wN0g23hQc39vA.W24xSlA0/JjXTOs4StCEht5Ni4235jK');
+
+        -- Associar o usuário Admin com a ROLE_ADMIN
+        INSERT INTO user_roles (user_id, role_id)
+        SELECT
+            (SELECT id FROM users WHERE email = 'admin@email.com'),
+            (SELECT id FROM roles WHERE name = 'ROLE_ADMIN');
+        ```
+      - Agora você pode se autenticar via `POST /login` com o email `admin@email.com` e a senha `admin123` para obter um token de administrador.
+
+6.  **Acesse a API:**
 
       - A aplicação estará disponível em `http://localhost:9090`.
       - A documentação Swagger estará em `http://localhost:9090/swagger-ui.html`.
@@ -126,10 +140,9 @@ Siga os passos abaixo para executar a API localmente.
 
 ## 👨‍💻 Autor
 
-Desenvolvido por **[Saulo Rodrigues Brilhante]**.
+Desenvolvido por **Saulo Rodrigues Brilhante**.
 
-[](https://www.google.com/search?q=https://www.linkedin.com/in/seu-linkedin/)
-[](https://www.google.com/search?q=https://github.com/seu-usuario)
+- [LinkedIn](https://www.linkedin.com/in/saulo-brilhante/)
 
 -----
 

@@ -2,13 +2,13 @@
 
 ### 📖 Índice
 
-  - [🚀 Sobre o Projeto](https://www.google.com/search?q=%23-sobre-o-projeto)
-  - [✨ Funcionalidades](https://www.google.com/search?q=%23-funcionalidades)
-  - [🛠️ Tecnologias Utilizadas](https://www.google.com/search?q=%23%EF%B8%8F-tecnologias-utilizadas)
-  - [📄 Documentação e Endpoints](https://www.google.com/search?q=%23-documenta%C3%A7%C3%A3o-e-endpoints)
-  - [🔧 Como Executar o Projeto](https://www.google.com/search?q=%23-como-executar-o-projeto)
-  - [👨‍💻 Autor](https://www.google.com/search?q=%23-autor)
-  - [📜 Licença](https://www.google.com/search?q=%23-licen%C3%A7a)
+- [🚀 Sobre o Projeto](#-sobre-o-projeto)
+- [✨ Funcionalidades](#-funcionalidades)
+- [🛠️ Tecnologias Utilizadas](#️-tecnologias-utilizadas)
+- [📄 Documentação e Endpoints](#-documentação-e-endpoints)
+- [🔧 Como Executar o Projeto](#-como-executar-o-projeto)
+- [👨‍💻 Autor](#-autor)
+- [📜 Licença](#-licença)
 
 -----
 
